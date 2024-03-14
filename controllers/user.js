@@ -1,3 +1,4 @@
+import ErrorHandler from "../middlewares/error.js";
 import bcrypt from "bcrypt";
 import { user } from "../models/user.js";
 import { sendcookie } from "../utils/features.js";
@@ -5,6 +6,7 @@ import { sendcookie } from "../utils/features.js";
 export const login = async (req, res, next) => {
  try {
   const { email, password } = req.body;
+
   const User = await user.findOne({ email }).select("+password");
 
   if (!User) return next(new ErrorHandler("Invalid Email or Password", 400));
@@ -24,12 +26,6 @@ export const register = async (req, res) => {
   const { name, email, password } = req.body;
   let User = await user.findOne({ email });
 
-  // if (User)
-  //   return res.status(404).json({
-  //     success: false,
-  //     message: "User Already Exist",
-  //   });
-
   if (User) return next(new ErrorHandler("User Already Exist", 400));
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -42,8 +38,6 @@ export const register = async (req, res) => {
 };
 
 export const getMyProfile = (req, res) => {
-  const id = "myid";
-
   res.status(200).json({
     success: true,
     User: req.User,
@@ -51,9 +45,7 @@ export const getMyProfile = (req, res) => {
 };
 
 export const logout = (req, res) => {
-  const id = "myid";
-
-  res
+   res
     .status(200)
     .cookie("token", "", { expires: new Date(Date.now()) ,
       sameSite:process.env.NODE_ENV==="Development"? "lax" : "none",

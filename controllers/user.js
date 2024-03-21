@@ -1,7 +1,7 @@
 import ErrorHandler from "../middlewares/error.js";
 import bcrypt from "bcrypt";
 import { user } from "../models/user.js";
-import { sendcookie } from "../utils/features.js";
+import { sendCookie } from "../utils/features.js";
 
 export const login = async (req, res, next) => {
  try {
@@ -15,7 +15,7 @@ export const login = async (req, res, next) => {
 
   if (!isMatch) return next(new ErrorHandler("Invalid Email or Password", 400));
 
-  sendcookie(User, res, `Welcome back, ${User.name}`, 200);
+  sendCookie(User, res, `Welcome back, ${User.name}`, 200);
  } catch (error) {
   next(error);
  }
@@ -31,7 +31,7 @@ export const register = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
   User = await user.create({ name, email, password: hashedPassword });
 
-  sendcookie(User, res, "Registered Succesfully", 201);
+  sendCookie(User, res, "Registered Succesfully", 201);
  } catch (error) {
   next(error);
  }
